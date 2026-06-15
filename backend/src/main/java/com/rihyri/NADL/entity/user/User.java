@@ -1,7 +1,8 @@
-package com.rihyri.NADL.entity;
+package com.rihyri.NADL.entity.user;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -49,6 +50,16 @@ public class User {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @Builder
+    public User(String loginId, String password, String email, String nickname, Role role) {
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+        this.role = role;
+        this.isDeleted = false;
+    }
 
     // 탈퇴 처리 메서드
     public void delete() {

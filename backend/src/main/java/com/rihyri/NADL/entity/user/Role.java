@@ -1,4 +1,4 @@
-package com.rihyri.NADL.entity;
+package com.rihyri.NADL.entity.user;
 
 public enum Role {
     USER, ADMIN

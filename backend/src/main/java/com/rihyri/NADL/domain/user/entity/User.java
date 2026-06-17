@@ -1,4 +1,4 @@
-package com.rihyri.NADL.entity.user;
+package com.rihyri.NADL.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

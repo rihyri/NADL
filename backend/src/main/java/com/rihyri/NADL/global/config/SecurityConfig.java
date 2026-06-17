@@ -40,6 +40,9 @@ public class SecurityConfig {
                                 "api/auth/login",
                                 "api/auth/reissue").permitAll()
                         .requestMatchers(HttpMethod.GET,
+                                "/api/auth/check/**"
+                                ).permitAll()
+                        .requestMatchers(HttpMethod.GET,
                                 "api/festivals/**",
                                 "/api/places/**").permitAll()
                         .anyRequest().authenticated()

@@ -21,7 +21,7 @@ public class UserService {
     // 아이디 중복 확인
     public void checkLoginId(String loginId) {
         if (userRepository.existsByLoginId(loginId)) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+            throw new CustomException(ErrorCode.DUPLICATE_LOGIN_ID);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.rihyri.NADL.domain.user.controller;
 
+import com.rihyri.NADL.domain.user.dto.LoginRequest;
+import com.rihyri.NADL.domain.user.dto.LoginResponse;
 import com.rihyri.NADL.domain.user.dto.SignUpRequest;
 import com.rihyri.NADL.domain.user.service.UserService;
 import com.rihyri.NADL.global.common.ApiResponse;
@@ -43,5 +45,11 @@ public class UserController {
         userService.signUp(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("회원가입이 완료되었습니다."));
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok("로그인에 성공했습니다.", userService.login(request)));
     }
 }

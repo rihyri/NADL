@@ -259,6 +259,47 @@ UserServiceTest {
                 .set(eq("RT:test123"), eq("refresh-token"), any(Duration.class));
     }
 
+    @Test
+    @DisplayName("로그인 실패 - 존재하지 않는 아이디")
+    void login_fail_userNotFound() {
+        LoginRequest request = createLoginRequest("test123", "password123");
+        given(userRepository.findByLoginIdAndIsDeletedFalse("test123"))
+                .willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.login(request))
+                .isInstanceOf(CustomException.class)
+                .satisfies(e -> {
+                    CustomException ce = (CustomException) e;
+                    assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.INVALID_CREDENTIALS);
+                });
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호 불일치")
+    void login_fail_wrongPassword() {
+        LoginRequest request = createLoginRequest("test123", "wrongPassword");
+
+        User user = User.builder()
+                .loginId("test123")
+                .password("암호화된비밀번호")
+                .email("test123@gmail.com")
+                .nickname("나들이왕")
+                .role(Role.USER)
+                .build();
+
+        given(userRepository.findByLoginIdAndIsDeletedFalse("test123")).willReturn(Optional.of(user));
+        given(passwordEncoder.matches("wrongPassword", "암호화된비밀번호")).willReturn(false);
+
+        assertThatThrownBy(() -> userService.login(request))
+                .isInstanceOf(CustomException.class)
+                .satisfies(e -> {
+                    CustomException ce = (CustomException) e;
+                    assertThat(ce.getErrorCode()).isEqualTo(ErrorCode.INVALID_CREDENTIALS);
+                });
+
+        verify(jwtTokenProvider, never()).createAccessToken(any(), any());
+    }
+
     private LoginRequest createLoginRequest(String loginId, String password) {
         try {
             LoginRequest request = new LoginRequest();

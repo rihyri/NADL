@@ -3,6 +3,7 @@ package com.rihyri.NADL.domain.user.service;
 import com.rihyri.NADL.domain.user.dto.LoginRequest;
 import com.rihyri.NADL.domain.user.dto.LoginResponse;
 import com.rihyri.NADL.domain.user.dto.SignUpRequest;
+import com.rihyri.NADL.domain.user.dto.TokenRefreshRequest;
 import com.rihyri.NADL.domain.user.entity.Role;
 import com.rihyri.NADL.domain.user.entity.User;
 import com.rihyri.NADL.domain.user.repository.UserRepository;
@@ -29,6 +30,7 @@ public class UserService {
     private final StringRedisTemplate redisTemplate;
 
     private static final String REFRESH_TOKEN_PREFIX = "RT:";
+    private static final String BLACKLIST_PREFIX = "BL:";
 
     // 아이디 중복 확인
     public void checkLoginId(String loginId) {
@@ -105,5 +107,50 @@ public class UserService {
         );
 
         return new LoginResponse(accessToken, refreshToken, user.getNickname());
+    }
+
+    // Access Token 재발급 (Refresh Token 유효성 검사 → Redis 저장값과 비교 → 새 토큰 발급)
+    public LoginResponse reissue(TokenRefreshRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        String loginId = jwtTokenProvider.getLoginId(refreshToken);
+
+        String savedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + loginId);
+        if (savedToken == null || !savedToken.equals(refreshToken)) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_MISMATCH);
+        }
+
+        User user = userRepository.findByLoginIdAndIsDeletedFalse(loginId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(user.getLoginId(), user.getRole().name());
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getLoginId());
+
+        // Redis 갱신
+        redisTemplate.opsForValue().set(
+                REFRESH_TOKEN_PREFIX + user.getLoginId(),
+                newRefreshToken,
+                Duration.ofMillis(jwtTokenProvider.getRefreshTokenExpiration())
+        );
+
+        return new LoginResponse(newAccessToken, newRefreshToken, user.getNickname());
+    }
+
+    // 로그아웃
+    public void logout(String accessToken, String loginId) {
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + loginId);
+
+        long expiration = jwtTokenProvider.getExpiration(accessToken);
+        if (expiration > 0) {
+            redisTemplate.opsForValue().set(
+                    BLACKLIST_PREFIX + accessToken,
+                    "logout",
+                    Duration.ofMillis(expiration)
+            );
+        }
     }
 }

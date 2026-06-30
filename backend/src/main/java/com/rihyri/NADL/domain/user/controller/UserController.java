@@ -3,12 +3,15 @@ package com.rihyri.NADL.domain.user.controller;
 import com.rihyri.NADL.domain.user.dto.LoginRequest;
 import com.rihyri.NADL.domain.user.dto.LoginResponse;
 import com.rihyri.NADL.domain.user.dto.SignUpRequest;
+import com.rihyri.NADL.domain.user.dto.TokenRefreshRequest;
 import com.rihyri.NADL.domain.user.service.UserService;
 import com.rihyri.NADL.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,5 +54,22 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(ApiResponse.ok("로그인에 성공했습니다.", userService.login(request)));
+    }
+
+    // 토큰 재발급
+    @PostMapping("/reissue")
+    public ResponseEntity<ApiResponse<LoginResponse>> reissue(@Valid @RequestBody TokenRefreshRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok("토큰이 재발급되었습니다.", userService.reissue(request)));
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @RequestHeader("Authorization") String bearerToken,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String accessToken = bearerToken.substring(7); // "Bearer " 제거
+        userService.logout(accessToken, userDetails.getUsername());
+        return ResponseEntity.ok(ApiResponse.ok("로그아웃 되었습니다."));
     }
 }

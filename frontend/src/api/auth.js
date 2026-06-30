@@ -21,3 +21,10 @@ export const checkNickname = (value) =>
 
 export const signup = (data) =>
   api.post('/api/auth/signup', data)
+
+export const logout = (accessToken) => 
+  api.post('/api/auth/logout', null, {
+    headers: {
+      Autorization: `Bearer ${accessToken}`,
+    },
+  })

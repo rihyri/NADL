@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { login as loginApi, logout as logoutApi } from '@/api/auth'
-import { P } from 'vue-router/dist/index-BQLwgiyK.js'
 
 export const useAuthStore = defineStore('auth', () => {
     const accessToken = ref(localStorage.getItem('accessToken') || null)

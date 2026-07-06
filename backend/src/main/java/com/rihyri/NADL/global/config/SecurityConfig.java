@@ -49,8 +49,10 @@ public class SecurityConfig {
                                 "/api/auth/check/**"
                                 ).permitAll()
                         .requestMatchers(HttpMethod.GET,
-                                "api/festivals/**",
+                                "/api/festivals/**",
                                 "/api/places/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/admin/tourapi/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

@@ -1,9 +1,9 @@
 package com.rihyri.NADL.domain.user.controller;
 
-import com.rihyri.NADL.domain.user.dto.LoginRequest;
-import com.rihyri.NADL.domain.user.dto.LoginResponse;
-import com.rihyri.NADL.domain.user.dto.SignUpRequest;
-import com.rihyri.NADL.domain.user.dto.TokenRefreshRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginResponse;
+import com.rihyri.NADL.domain.user.dto.login.SignUpRequest;
+import com.rihyri.NADL.domain.user.dto.login.TokenRefreshRequest;
 import com.rihyri.NADL.domain.user.service.UserService;
 import com.rihyri.NADL.global.common.ApiResponse;
 import jakarta.validation.Valid;

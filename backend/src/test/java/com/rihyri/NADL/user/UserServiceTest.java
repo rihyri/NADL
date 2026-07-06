@@ -1,8 +1,8 @@
 package com.rihyri.NADL.user;
 
-import com.rihyri.NADL.domain.user.dto.LoginRequest;
-import com.rihyri.NADL.domain.user.dto.LoginResponse;
-import com.rihyri.NADL.domain.user.dto.SignUpRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginResponse;
+import com.rihyri.NADL.domain.user.dto.login.SignUpRequest;
 import com.rihyri.NADL.domain.user.entity.Role;
 import com.rihyri.NADL.domain.user.entity.User;
 import com.rihyri.NADL.domain.user.repository.UserRepository;
@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.DURATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;

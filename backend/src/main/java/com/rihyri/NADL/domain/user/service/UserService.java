@@ -1,9 +1,9 @@
 package com.rihyri.NADL.domain.user.service;
 
-import com.rihyri.NADL.domain.user.dto.LoginRequest;
-import com.rihyri.NADL.domain.user.dto.LoginResponse;
-import com.rihyri.NADL.domain.user.dto.SignUpRequest;
-import com.rihyri.NADL.domain.user.dto.TokenRefreshRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginRequest;
+import com.rihyri.NADL.domain.user.dto.login.LoginResponse;
+import com.rihyri.NADL.domain.user.dto.login.SignUpRequest;
+import com.rihyri.NADL.domain.user.dto.login.TokenRefreshRequest;
 import com.rihyri.NADL.domain.user.entity.Role;
 import com.rihyri.NADL.domain.user.entity.User;
 import com.rihyri.NADL.domain.user.repository.UserRepository;

@@ -1,8 +1,8 @@
 package com.rihyri.NADL.domain.festival.controller;
 
-import com.rihyri.NADL.dto.ApiResponse;
-import com.rihyri.NADL.entity.Festival;
-import com.rihyri.NADL.repository.FestivalRepository;
+import com.rihyri.NADL.domain.festival.entity.Festival;
+import com.rihyri.NADL.domain.festival.repository.FestivalRepository;
+import com.rihyri.NADL.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FestivalController {
 
-  private final FestivalRepository festivalRepository;
+    private final FestivalRepository festivalRepository;
 
     @GetMapping
     public ApiResponse<List<Festival>> getFestivals() {

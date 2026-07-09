@@ -1,4 +1,4 @@
-package com.rihyri.NADL.domain.festival.dto;
+package com.rihyri.NADL.global.common;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

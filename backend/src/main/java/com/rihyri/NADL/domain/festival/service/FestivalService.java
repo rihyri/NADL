@@ -1,7 +1,8 @@
 package com.rihyri.NADL.domain.festival.service;
 
 import com.rihyri.NADL.domain.festival.dto.FestivalItemDto;
-import com.rihyri.NADL.domain.festival.dto.TourApiResponse;
+import com.rihyri.NADL.global.common.TourApiClient;
+import com.rihyri.NADL.global.common.TourApiResponse;
 import com.rihyri.NADL.domain.festival.entity.Festival;
 import com.rihyri.NADL.domain.festival.repository.FestivalRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,43 +19,22 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TourApiService {
+public class FestivalService {
 
-    private final WebClient webClient;
+    private final TourApiClient tourApiClient;
     private final FestivalRepository festivalRepository;
-
-    @Value("${tourapi.service-key}")
-    private String serviceKey;
 
     public int syncFestivals() {
         String eventStartDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        TourApiResponse<FestivalItemDto> response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/searchFestival2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("numOfRows", 100)
-                        .queryParam("pageNo", 1)
-                        .queryParam("MobileOS", "ETC")
-                        .queryParam("MobileApp", "Nadeul")
-                        .queryParam("_type", "json")
-                        .queryParam("eventStartDate", eventStartDate)
-                        .build())
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<TourApiResponse<FestivalItemDto>>() {})
-                .block();
-
+        TourApiResponse<FestivalItemDto> response = tourApiClient.searchFestivals(eventStartDate);
         List<FestivalItemDto> items = response.getResponse().getBody().getItems().getItem();
 
         int savedCount = 0;
         for (FestivalItemDto item : items) {
-
-            log.info("contentid: {}, title: {}", item.getContentId(), item.getTitle());
-
             if (festivalRepository.existsByExternalId(item.getContentId())) {
-                continue; // 이미 있으면 skip
+                continue;
             }
-
             Festival festival = Festival.builder()
                     .externalId(item.getContentId())
                     .sourceApi("TourAPI")
@@ -67,7 +47,6 @@ public class TourApiService {
                     .category(item.getCat3())
                     .imageUrl(item.getImageUrl())
                     .build();
-
             festivalRepository.save(festival);
             savedCount++;
         }

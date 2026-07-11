@@ -1,6 +1,7 @@
 package com.rihyri.NADL.global.common;
 
 import com.rihyri.NADL.domain.festival.dto.FestivalItemDto;
+import com.rihyri.NADL.domain.place.dto.PlaceItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -30,6 +31,27 @@ public class TourApiClient {
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<TourApiResponse<FestivalItemDto>>() {})
+                .block();
+    }
+
+    public TourApiResponse<PlaceItemDto> searchNearbyPlaces(double lat, double lng, double radius) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/locationBasedList2")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("numOfRows", 50)
+                        .queryParam("pageNo", 1)
+                        .queryParam("MobileOS", "ETC")
+                        .queryParam("MobileApp", "Nadeul")
+                        .queryParam("_type", "json")
+                        .queryParam("mapX", lng)
+                        .queryParam("mapY", lat)
+                        .queryParam("radius", (int) radius)
+                        .queryParam("contentTypeId", 12)
+                        .queryParam("arrange", "E")
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<TourApiResponse<PlaceItemDto>>() {})
                 .block();
     }
 }

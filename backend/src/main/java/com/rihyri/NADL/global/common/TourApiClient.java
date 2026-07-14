@@ -1,6 +1,7 @@
 package com.rihyri.NADL.global.common;
 
 import com.rihyri.NADL.domain.festival.dto.FestivalItemDto;
+import com.rihyri.NADL.domain.place.dto.PlaceDetailDto;
 import com.rihyri.NADL.domain.place.dto.PlaceItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,27 @@ public class TourApiClient {
                         .build())
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<TourApiResponse<PlaceItemDto>>() {})
+                .block();
+    }
+
+    public TourApiResponse<PlaceDetailDto> getPlaceDetail(String contentId) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/detailCommon2")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("numOfRows", 10)
+                        .queryParam("pageNo", 1)
+                        .queryParam("MobileOS", "ETC")
+                        .queryParam("MobileApp", "Nadeul")
+                        .queryParam("_type", "json")
+                        .queryParam("contentId", contentId)
+                        .queryParam("defaultYN", "Y")
+                        .queryParam("firstImageYN", "Y")
+                        .queryParam("mapinfoYN", "Y")
+                        .queryParam("overviewYN", "Y")
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<TourApiResponse<PlaceDetailDto>>() {})
                 .block();
     }
 }

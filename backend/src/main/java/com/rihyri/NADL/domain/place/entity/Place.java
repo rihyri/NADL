@@ -1,5 +1,6 @@
 package com.rihyri.NADL.domain.place.entity;
 
+import com.rihyri.NADL.domain.place.dto.PlaceDetailDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -55,4 +56,24 @@ public class Place {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
-}
+
+    public static Place fromDetailDto(PlaceDetailDto dto, String sourceApi) {
+        return Place.builder()
+                .externalId(dto.getContentId())
+                .sourceApi(sourceApi)
+                .name(dto.getTitle())
+                .description(dto.getOverview())
+                .address(dto.getAddress())
+                .latitude(parseCoordinate(dto.getMapy()))
+                .longitude(parseCoordinate(dto.getMapx()))
+                .category(dto.getCat3())
+                .indoorOutdoorType(null)    // 추후 별도 매핑 예정
+                .imageUrl(dto.getImageUrl())
+                .build();
+    }
+
+    private static Double parseCoordinate(String value) {
+        if (value == null || value.isBlank()) return null;
+        return Double.parseDouble(value);
+    }
+ }

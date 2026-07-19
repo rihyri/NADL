@@ -2,6 +2,7 @@ package com.rihyri.NADL.domain.place.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rihyri.NADL.domain.place.dto.PlaceDetailDto;
 import com.rihyri.NADL.domain.place.dto.PlaceItemDto;
@@ -14,6 +15,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -100,6 +102,48 @@ public class PlaceService {
             return objectMapper.readValue(json, PlaceDetailDto.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("장소 상세 역직렬화 실패", e);
+        }
+    }
+
+    public String getCategoryCodeRawForDebug(String cat1, String cat2) {
+        return tourApiClient.getCategoryCodeRaw(cat1, cat2);
+    }
+
+    public String getAllCategoryCodesForDebug() {
+        StringBuilder result = new StringBuilder();
+
+        String cat1Json = tourApiClient.getCategoryCodeRaw(null, null);
+        List<String> cat1List = extractCodes(cat1Json);
+
+        for (String cat1 : cat1List) {
+            String cat2Json = tourApiClient.getCategoryCodeRaw(cat1, null);
+            List<String> cat2List = extractCodes(cat2Json);
+
+            for (String cat2 : cat2List) {
+                String cat3Json = tourApiClient.getCategoryCodeRaw(cat1, cat2);
+                result.append(cat3Json).append("\n");
+            }
+        }
+
+        return result.toString();
+    }
+
+    private List<String> extractCodes(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode items = root.path("response").path("body").path("items").path("item");
+            List<String> codes = new ArrayList<>();
+
+            if (items.isArray()) {
+                for (JsonNode item : items) {
+                    codes.add(item.path("code").asText());
+                }
+            } else if (!items.isMissingNode() && items.has("code")) {
+                codes.add(items.path("code").asText());
+            }
+            return codes;
+        } catch (Exception e) {
+            throw new RuntimeException("category code 파싱 실패", e);
         }
     }
 }

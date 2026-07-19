@@ -32,4 +32,17 @@ public class PlaceController {
         PlaceDetailDto detail = placeService.getPlaceDetail(contentId);
         return ApiResponse.ok("상세 조회 성공", detail);
     }
+
+    @GetMapping("/category-code")
+    public String getCategoryCode(
+            @RequestParam(required = false) String cat1,
+            @RequestParam(required = false) String cat2
+    ) {
+        return placeService.getCategoryCodeRawForDebug(cat1, cat2);
+    }
+
+    @GetMapping("/category-code/all")
+    public String getAllCategoryCodes() {
+        return placeService.getAllCategoryCodesForDebug();
+    }
 }

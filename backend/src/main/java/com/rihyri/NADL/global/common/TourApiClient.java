@@ -72,4 +72,24 @@ public class TourApiClient {
                 .bodyToMono(new ParameterizedTypeReference<TourApiResponse<PlaceDetailDto>>() {})
                 .block();
     }
+
+    public String getCategoryCodeRaw(String cat1, String cat2) {
+        return webClient.get()
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/categoryCode2")
+                            .queryParam("serviceKey", serviceKey)
+                            .queryParam("numOfRows", 100)
+                            .queryParam("pageNo",1)
+                            .queryParam("MobileOS", "ETC")
+                            .queryParam("MobileApp", "Nadeul")
+                            .queryParam("_type", "json")
+                            .queryParam("contentTypeId", 12);
+                    if (cat1 != null) uriBuilder.queryParam("cat1", cat1);
+                    if (cat2 != null) uriBuilder.queryParam("cat2", cat2);
+                    return uriBuilder.build();
+                })
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }

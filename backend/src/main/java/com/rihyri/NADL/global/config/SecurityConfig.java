@@ -52,6 +52,10 @@ public class SecurityConfig {
                                 "/api/festivals/**",
                                 "/api/places/**").permitAll()
                         .requestMatchers(HttpMethod.POST,
+                                "/api/places/*/bookmark").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/places/*/bookmark").authenticated()
+                        .requestMatchers(HttpMethod.POST,
                                 "/api/admin/tourapi/**").permitAll()
                         .anyRequest().authenticated()
                 )

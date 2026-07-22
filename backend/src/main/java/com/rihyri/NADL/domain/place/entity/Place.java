@@ -23,7 +23,10 @@ public class Place {
     private String sourceApi;
 
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
+
     private String address;
 
     private Double latitude;
@@ -67,7 +70,7 @@ public class Place {
                 .latitude(parseCoordinate(dto.getMapy()))
                 .longitude(parseCoordinate(dto.getMapx()))
                 .category(dto.getCat3())
-                .indoorOutdoorType(null)    // 추후 별도 매핑 예정
+                .indoorOutdoorType(null)
                 .imageUrl(dto.getImageUrl())
                 .build();
     }
@@ -76,4 +79,4 @@ public class Place {
         if (value == null || value.isBlank()) return null;
         return Double.parseDouble(value);
     }
- }
+}
